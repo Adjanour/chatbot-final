@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Chat Interface</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+			}
+			.container {
+				display: flex;
+				align-items: center;
+				border-radius: 1.5rem;
+				padding: 0.5rem 1rem;
+				background-color: #f4f4f4;
+				gap: 0.5rem;
+				margin: 0.7rem 0.8rem;
+			}
+			.input-container {
+				display: flex;
+				align-items: flex-end;
+				gap: 0.5rem;
+				width: 100%;
+			}
+			#input-box {
+				width: 100%;
+				outline: none;
+				border: none;
+				padding: 0.2rem;
+				background-color: transparent;
+				max-height: 150px;
+				overflow-y: auto;
+				word-wrap: break-word;
+				line-height: 1.4rem;
+				font-size: 1rem;
+				min-height: 26px;
+			}
+			#send-button {
+				background-color: blue;
+				border: none;
+				width: 2rem;
+				height: 2rem;
+				border-radius: 999px;
+				color: white;
+				cursor: pointer;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.chat-wall {
+				padding: 0.5rem;
+				height: 300px;
+				overflow-y: auto;
+				display: flex;
+				flex-direction: column;
+			}
+			.profile-image-message {
+				width: 1.5rem;
+				height: 1.5rem;
+				border-radius: 99999px;
+				border: 2px solid black;
+			}
+			.chat-bot {
+				position: fixed;
+				bottom: 80px;
+				right: 10px;
+				width: 375px;
+				border: 1px solid #ccc;
+				border-radius: 1rem;
+				overflow: hidden;
+				display: none;
+			}
+			.chat-bot-button {
+				position: fixed;
+				bottom: 10px;
+				right: 10px;
+				border-radius: 99999px;
+				border: none;
+				width: 50px;
+				height: 50px;
+			}
+			.chat-message,
+			.user-message {
+				display: flex;
+				gap: 0.5rem;
+				padding: 0.5rem;
+				align-items: center;
+				max-width: 70%; /* Set max width to prevent overflow */
+				word-break: break-word; /* Break long words to prevent overflow */
+				border-radius: 0.5rem;
+			}
+			.user-message {
+				align-self: flex-end;
+				background-color: #e0f7fa;
+			}
+			.message {
+				padding: 0.5rem;
+				border-radius: 0.5rem;
+			}
+		</style>
+	</head>
+	<body>
+		<button class="chat-bot-button" onclick="toggleChat()">
+			<img
+				src="https://placeholder.co/50"
+				style="border-radius: 999px"
+				alt="Chat Bot"
+			/>
+		</button>
+
+		<div class="chat-bot">
+			<div class="container">
+				<div class="input-container">
+					<textarea id="text-area" style="display: none"></textarea>
+					<div
+						contenteditable="true"
+						id="input-box"
+						role="textbox"
+						aria-placeholder="Type your message here"
+					></div>
+					<button
+						id="send-button"
+						aria-label="Send message"
+						onclick="sendMessage()"
+					>
+						<svg width="24" height="24" viewBox="0 0 24 24">
+							<path
+								d="M2 21l21-9L2 3v7l15 1-15 1v7z"
+								fill="currentColor"
+							/>
+						</svg>
+					</button>
+				</div>
+			</div>
+			<div class="chat-wall" id="chat-wall">
+				<div class="chat-message">
+					<div class="message">
+						Hi there! How can I help you today?
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			// Toggles chat bot visibility
+			function toggleChat() {
+				const chatBot = document.querySelector(".chat-bot");
+				chatBot.style.display =
+					chatBot.style.display === "none" ? "block" : "none";
+			}
+
+			// Handles sending of messages
+			function sendMessage() {
+				const inputBox = document.getElementById("input-box");
+				const message = inputBox.innerText.trim();
+				if (message === "") return;
+
+				// Add user message to chat
+				const chatWall = document.getElementById("chat-wall");
+				const userMessage = document.createElement("div");
+				userMessage.classList.add("user-message");
+				userMessage.innerHTML = `<div class="message">${message}</div>`;
+				chatWall.appendChild(userMessage);
+
+				// Clear input box
+				inputBox.innerText = "";
+
+				// Scroll chat to bottom
+				chatWall.scrollTop = chatWall.scrollHeight;
+
+				// Simulate bot response (you can replace this with an actual bot response)
+				setTimeout(() => {
+					const botMessage = document.createElement("div");
+					botMessage.classList.add("chat-message");
+					botMessage.innerHTML = `<div class="message">Thank you for your message! I'm here to help.</div>`;
+					chatWall.appendChild(botMessage);
+					chatWall.scrollTop = chatWall.scrollHeight;
+				}, 1000);
+			}
+		</script>
+	</body>
+</html>

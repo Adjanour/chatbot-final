@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Chat Interface</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+			}
+			.container {
+				display: flex;
+				align-items: center;
+				border-radius: 1.5rem;
+				padding: 0.5rem 1rem;
+				background-color: #f4f4f4;
+				gap: 0.5rem;
+				margin: 0.7rem 0.8rem;
+			}
+			.input-container {
+				display: flex;
+				align-items: flex-end;
+				gap: 0.5rem;
+				width: 100%;
+			}
+			.placeholder {
+				color: gray; /* Placeholder text color */
+			}
+
+			#input-box {
+				width: 100%;
+				outline: none;
+				border: none;
+				padding: 0.2rem;
+				background-color: transparent;
+				max-height: 150px;
+				overflow-y: auto;
+				word-wrap: break-word;
+				overflow-y: auto;
+				outline: none;
+				line-height: 1.4rem;
+				font-size: 1.2rem;
+				min-height: 26px;
+				align-items: center;
+				font-size: 1rem;
+			}
+			#send-button {
+				background-color: blue;
+				border: none;
+				width: 2rem;
+				justify-content: center;
+				border-radius: 999999px;
+				align-items: center;
+				height: 2rem;
+				color: white;
+				cursor: pointer;
+				display: flex;
+			}
+			.attachment-button {
+				outline: none;
+				border: none;
+			}
+			textarea {
+				display: none;
+				width: 100%;
+				outline: none;
+				border: none;
+				padding: 0.2rem;
+				background-color: transparent;
+				max-height: 150px;
+				overflow-y: auto;
+				word-wrap: break-word;
+				overflow-y: auto;
+				outline: none;
+				line-height: 1.4rem;
+				font-size: 1.4rem;
+				min-height: 26px;
+				align-items: center;
+				font-size: 1rem;
+			}
+			.chat-wall {
+				padding: 0.5rem;
+			}
+			.profile-image {
+				width: 2rem;
+				height: 2rem;
+				border-radius: 99999px;
+				border: 2px solid black;
+			}
+			.profile-image-message {
+				width: 1.5rem;
+				height: 1.5rem;
+				border-radius: 99999px;
+				border: 2px solid black;
+			}
+			.header {
+				background-color: #f0f0f0;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 0.8rem;
+			}
+			.profile {
+				display: flex;
+				position: relative;
+				width: fit-content;
+			}
+			.status-dot {
+				width: 0.7rem;
+				height: 0.7rem;
+				background-color: green;
+				border: 2px solid white;
+				position: absolute;
+				border-radius: 99999px;
+				bottom: 0;
+				right: 0;
+			}
+			.status-dot-message {
+				width: 0.5rem;
+				height: 0.5rem;
+				background-color: green;
+				border: 2px solid white;
+				position: absolute;
+				border-radius: 99999px;
+			}
+			.close-button {
+				background-color: transparent;
+				border: none;
+				cursor: pointer;
+				font-size: 1.5rem;
+			}
+			.inner {
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+			}
+			.chat-bot {
+				position: fixed;
+				bottom: 80px;
+				right: 10px;
+				width: 375px;
+				border: 1px solid #ccc;
+				border-radius: 1rem;
+				overflow: hidden;
+				display: none; /* hide by default */
+				transition: all 0.3s ease-in-out;
+			}
+
+			.chat-wall {
+				height: 300px;
+				overflow-y: auto;
+				display: flex;
+				flex-direction: column;
+			}
+			.chat-bot-button {
+				position: fixed;
+				bottom: 10px;
+				right: 10px;
+				border-radius: 99999px;
+				border: none;
+				width: 50px;
+				height: 50px;
+			}
+			/* Target the scrollbar track */
+			#input-box::-webkit-scrollbar {
+				width: 8px; /* Width of the scrollbar */
+				height: 8px; /* Height for horizontal scrollbars */
+			}
+
+			.chat-wall::-webkit-scrollbar {
+				width: 8px; /* Width of the scrollbar */
+				height: 8px; /* Height for horizontal scrollbars */
+			}
+			.chat-wall::-webkit-scrollbar-thumb {
+				background-color: #888; /* Scrollbar thumb color */
+				border-radius: 10px; /* Roundness of the thumb */
+			}
+			.chat-wall::-webkit-scrollbar-track {
+				background: #e0e0e0; /* Color of the scrollbar track */
+				border-radius: 10px; /* Roundness of the track */
+			}
+			/* Scrollbar track */
+			#input-box::-webkit-scrollbar-track {
+				background: #e0e0e0; /* Color of the scrollbar track */
+				border-radius: 10px;
+			}
+
+			/* Scrollbar thumb (the draggable part) */
+			#input-box::-webkit-scrollbar-thumb {
+				background-color: #888; /* Scrollbar thumb color */
+				border-radius: 10px;
+				border: 2px solid #f4f4f4; /* Adds space around the thumb */
+			}
+
+			/* Scrollbar thumb on hover */
+			#input-box::-webkit-scrollbar-thumb:hover {
+				background-color: #555; /* Darker color when hovered */
+			}
+			.chat-message {
+				display: flex;
+				gap: 0.5rem;
+				padding: 0.5rem;
+				align-items: center;
+				max-width: 85%;
+			}
+			.message {
+				background-color: #f0f0f0;
+				padding: 0.5rem;
+				border-radius: 0.5rem;
+			}
+			.chat-message > .message {
+				transition: all 0.3s ease-in-out;
+				background-color: #ffffff;
+			}
+			.user-message {
+				display: flex;
+				gap: 0.5rem;
+				padding: 0.5rem;
+				align-items: center;
+				max-width: 85%;
+				margin-bottom: 0.5rem;
+				align-self: flex-end;
+				display: inline-block;
+			}
+			.user-message,
+			.chat-message {
+				word-break: break-word; /* Wrap long words within the container */
+				font-size: 0.9rem;
+			}
+		</style>
+	</head>
+	<body>
+		<button class="chat-bot-button">
+			<img
+				src="https://placeholder.co/50"
+				style="border-radius: 999999px; border: 2px solid black"
+				alt="Chat Bot"
+			/>
+		</button>
+
+		<div class="chat-bot">
+			<div class="header">
+				<div class="inner">
+					<div class="profile">
+						<img
+							src="https://placeholder.co/30"
+							alt=""
+							class="profile-image"
+						/>
+						<span class="status-dot"> </span>
+					</div>
+					<div>
+						<p>Bot</p>
+					</div>
+				</div>
+
+				<button class="close-button">
+					<svg
+						height="1rem"
+						width="1rem"
+						version="1.1"
+						id="Capa_1"
+						xmlns="http://www.w3.org/2000/svg"
+						xmlns:xlink="http://www.w3.org/1999/xlink"
+						viewBox="0 0 26 26"
+						xml:space="preserve"
+						style="fill: #030104; border: radius 9999px"
+					>
+						<g>
+							<path
+								style="fill: #030104"
+								d="M21.125,0H4.875C2.182,0,0,2.182,0,4.875v16.25C0,23.818,2.182,26,4.875,26h16.25
+		C23.818,26,26,23.818,26,21.125V4.875C26,2.182,23.818,0,21.125,0z M18.78,17.394l-1.388,1.387c-0.254,0.255-0.67,0.255-0.924,0
+		L13,15.313L9.533,18.78c-0.255,0.255-0.67,0.255-0.925-0.002L7.22,17.394c-0.253-0.256-0.253-0.669,0-0.926l3.468-3.467
+		L7.221,9.534c-0.254-0.256-0.254-0.672,0-0.925l1.388-1.388c0.255-0.257,0.671-0.257,0.925,0L13,10.689l3.468-3.468
+		c0.255-0.257,0.671-0.257,0.924,0l1.388,1.386c0.254,0.255,0.254,0.671,0.001,0.927l-3.468,3.467l3.468,3.467
+		C19.033,16.725,19.033,17.138,18.78,17.394z"
+							/>
+						</g>
+					</svg>
+				</button>
+			</div>
+			<div class="chat-wall">
+				<div class="chat-message">
+					<div class="profile">
+						<img
+							src="https://placeholder.co/30"
+							alt=""
+							class="profile-image-message"
+						/>
+					</div>
+					<div class="message">
+						<p class="message-p">
+							Hi there! How can I help you today?
+						</p>
+					</div>
+				</div>
+				<div class="user-message">
+					<div class="message">
+						<p>Hi there! How can I help you today?</p>
+					</div>
+				</div>
+			</div>
+			<div class="container">
+				<div class="input-container">
+					<button aria-label="Attach file" class="attachment-button">
+						<!-- SVG Icon for Attachment -->
+						<svg
+							width="24"
+							height="24"
+							fill="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								d="M9 7C9 4.23858 11.2386 2 14 2C16.7614 2 19 4.23858 19 7V15C19 18.866 15.866 22 12 22C8.13401 22 5 18.866 5 15V9C5 8.44772 5.44772 8 6 8C6.55228 8 7 8.44772 7 9V15C7 17.7614 9.23858 20 12 20C14.7614 20 17 17.7614 17 15V7C17 5.34315 15.6569 4 14 4C12.3431 4 11 5.34315 11 7V15C11 15.5523 11.4477 16 12 16C12.5523 16 13 15.5523 13 15V9C13 8.44772 13.4477 8 14 8C14.5523 8 15 8.44772 15 9V15C15 16.6569 13.6569 18 12 18C10.3431 18 9 16.6569 9 15V7Z"
+							></path>
+						</svg>
+					</button>
+					<textarea id="text-area"></textarea>
+					<div
+						contenteditable="true"
+						id="input-box"
+						role="textbox"
+						aria-placeholder="Type your message here"
+					></div>
+					<button id="send-button" aria-label="Send message">
+						<svg
+							width="32"
+							height="32"
+							viewBox="0 0 32 32"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+							class="icon-2xl"
+						>
+							<path
+								fill-rule="evenodd"
+								clip-rule="evenodd"
+								d="M15.1918 8.90615C15.6381 8.45983 16.3618 8.45983 16.8081 8.90615L21.9509 14.049C22.3972 14.4953 22.3972 15.2189 21.9509 15.6652C21.5046 16.1116 20.781 16.1116 20.3347 15.6652L17.1428 12.4734V22.2857C17.1428 22.9169 16.6311 23.4286 15.9999 23.4286C15.3688 23.4286 14.8571 22.9169 14.8571 22.2857V12.4734L11.6652 15.6652C11.2189 16.1116 10.4953 16.1116 10.049 15.6652C9.60265 15.2189 9.60265 14.4953 10.049 14.049L15.1918 8.90615Z"
+								fill="currentColor"
+							></path>
+						</svg>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			const chatBotButton = document.querySelector(".chat-bot-button");
+			const chatBot = document.querySelector(".chat-bot");
+			const chatWall = document.querySelector(".chat-wall");
+			const inputBox = document.getElementById("input-box");
+			const closeButton = document.querySelector(".close-button");
+
+			chatBotButton.addEventListener("click", () => {
+				if (chatBot.style.display === "block") {
+					chatBot.style.display = "none";
+					return;
+				} else {
+					chatBot.style.display = "block";
+				}
+			});
+
+			closeButton.addEventListener("click", () => {
+				chatBot.style.display = "none";
+			});
+
+			function displayUserMessage() {
+				const userMessage = document.createElement("div");
+				userMessage.classList.add("user-message");
+				const message = document.createElement("div");
+				message.classList.add("message");
+				const message_p = document.createElement("p");
+				message_p.innerText = inputBox.innerText;
+				message.appendChild(message_p);
+				userMessage.appendChild(message);
+				chatWall.appendChild(userMessage);
+			}
+
+			// Placeholder text display for empty content
+			function togglePlaceholder() {
+				if (inputBox.innerText.trim() === "") {
+					inputBox.classList.add("placeholder"); // Apply placeholder styling
+					inputBox.innerText = "Type your message here";
+				}
+			}
+
+			// Initialize placeholder
+			togglePlaceholder();
+
+			inputBox.addEventListener("focus", () => {
+				if (inputBox.classList.contains("placeholder")) {
+					inputBox.innerText = "";
+					inputBox.classList.remove("placeholder");
+				}
+			});
+
+			inputBox.addEventListener("blur", togglePlaceholder);
+
+			const textArea = document.getElementById("text-area");
+			const sendButton = document.getElementById("send-button");
+
+			sendButton.addEventListener("click", () => {
+				// Display the user message in the chat wall
+				displayUserMessage();
+				// Transfer content from input-box to text-area
+				textArea.value = inputBox.innerText;
+
+				// Log the message to the console as confirmation
+				console.log("Message sent:", textArea.value);
+
+				// Clear the content in the input box after sending
+				inputBox.innerText = "";
+				// Scroll chat to bottom
+				chatWall.scrollTop = chatWall.scrollHeight;
+
+				// Simulate bot response (you can replace this with an actual bot response)
+				setTimeout(() => {
+					const botProfileImage = document.createElement("div");
+					botProfileImage.classList.add("profile");
+					const botImage = document.createElement("img");
+					botImage.classList.add("profile-image-message");
+					botImage.src = "https://placeholder.co/30";
+					botProfileImage.appendChild(botImage);
+					const botMessage = document.createElement("div");
+					botMessage.classList.add("chat-message");
+					const message = document.createElement("div");
+					message.classList.add("message");
+					message.textContent =
+						"Thank you for your message! I'm here to help.";
+					botMessage.appendChild(botProfileImage);
+					botMessage.appendChild(message);
+					chatWall.appendChild(botMessage);
+					chatWall.scrollTop = chatWall.scrollHeight;
+				}, 1000);
+			});
+		</script>
+	</body>
+</html>
